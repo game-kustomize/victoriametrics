@@ -13,7 +13,7 @@ VictoriaMetrics is a fast, cost-effective and scalable monitoring solution and t
 ## deployment
 - clone this repository
 ```shell
-git clone git@gitlab.v16cp.me:sre/monitor/victoria-metrics.git && cd k8s_manifests
+git clone git@gitlab.v16cp.me:sre/monitor/victoriametrics.git && cd k8s_manifests
 ```
 
 - cluster servers
