@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: vmagent
+  name: vmagent
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vmagent
+  template:
+    metadata:
+      labels:
+        app: vmagent
+    spec:
+      serviceAccountName: vmagent
+      securityContext: {}
+      containers:
+        - name: vmagent
+          securityContext: {}
+          image: "victoriametrics/vmagent:v1.95.1"
+          workingDir: /
+          args:
+            - -promscrape.config=/vmagent/config/config.yaml
+            - -remoteWrite.tmpDataPath=/tmpData
+            - -envflag.enable=true
+            - -envflag.prefix=VM_
+            - -loggerFormat=json
+            - -remoteWrite.url=https://vminsert.v16cp.me/insert/0/prometheus/api/v1/write
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8429
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+          envFrom:
+            - secretRef:
+                name: vmagent-secret
+          volumeMounts:
+            - name: tmpdata
+              mountPath: /tmpData
+            - name: config
+              mountPath: /vmagent/config
+            - name: jobs
+              mountPath: /vmagent/jobs
+          resources: {}
+      volumes:
+        - name: tmpdata
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: vmagent-config
+        - name: jobs
+          configMap:
+            name: vmagent-jobs

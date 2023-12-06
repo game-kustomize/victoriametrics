@@ -1,0 +1,7 @@
+- job_name: "container_cadvisor"
+  static_configs:
+    - targets:
+        - prod-hcgateconsole-001.v16cp.me:8080
+      labels:
+        env: prod
+        instance: prod-hcgateconsole-001

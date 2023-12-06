@@ -1,0 +1,21 @@
+- job_name: "infra-service-http-probe"
+  scrape_interval: 1m
+  metrics_path: /probe
+  params:
+    module: [http_2xx]
+  static_configs:
+    - targets:
+        - https://meet.twroa.com
+        - https://rocket.v16cp.me
+        - https://jira.v16cp.me
+        - https://confluence.v16cp.me
+        - https://gitlab.v16cp.me
+        - https://vault.v16cp.me
+        - https://keycloak.v16cp.me/auth/health/live
+  relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: prometheus-blackbox-exporter.monitor-agent.svc.cluster.local:9115

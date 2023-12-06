@@ -1,0 +1,29 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vminsert
+  namespace: monitoring
+  annotations:
+    alb.ingress.kubernetes.io/load-balancer-name: vminsert
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/target-type: "ip"
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/load-balancer-attributes: deletion_protection.enabled=false,idle_timeout.timeout_seconds=60
+    alb.ingress.kubernetes.io/security-groups: eks-cluster-sg-devops-eks-2099794627, metrics-storage
+spec:
+  ingressClassName: alb
+  rules:
+    - host: vminsert.v16cp.me
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vminsert
+                port:
+                  number: 8480

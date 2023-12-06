@@ -1,0 +1,5 @@
+- job_name: "vmagent"
+  static_configs:
+    - targets: ["vmagent:8429"]
+      labels:
+        env: prod

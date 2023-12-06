@@ -1,0 +1,7 @@
+- job_name: "container_cadvisor"
+  static_configs:
+    - targets:
+        - gs-uat.v16cp.me:8080
+      labels:
+        env: uat
+        instance: GS-uat

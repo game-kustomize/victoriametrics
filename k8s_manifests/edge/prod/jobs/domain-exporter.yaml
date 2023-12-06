@@ -1,0 +1,19 @@
+- job_name: "domain-exporter"
+  scrape_interval: 1m
+  metrics_path: /probe
+  relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - target_label: __address__
+      replacement: domain-exporter.monitor-agent.svc.cluster.local:9222
+  static_configs:
+    - targets:
+        - chilligame.app
+        - chilligame.club
+        - chilligame.com
+        - chilligame.net
+        - chilligame.org
+        - red-chilli.net
+        - green-chilli.net
+        - chili-game.com
+        - chilli-game.com

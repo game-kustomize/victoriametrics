@@ -1,0 +1,114 @@
+groups:
+  - name: rules
+    rules:
+      - expr: |-
+          sum by (cluster, namespace, pod, container, env) (
+            rate(container_cpu_usage_seconds_total{job="kubernetes-cadvisor", image!="", container!="POD"}[5m])
+          ) * on (cluster, namespace, pod, env) group_left(node) topk by (cluster, namespace, pod, env) (
+            1, max by(cluster, namespace, pod, node, env) (kube_pod_info{node!=""})
+          )
+        record: node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate
+
+      - expr: |-
+          kube_pod_container_resource_requests{resource="cpu",job="kube-state-metrics"}  * on (namespace, pod, cluster)
+          group_left() max by (namespace, pod, cluster) (
+            (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
+          )
+        record: cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests
+
+      - expr: |-
+          kube_pod_container_resource_limits{resource="cpu",job="kube-state-metrics"}  * on (namespace, pod, cluster)
+          group_left() max by (namespace, pod, cluster) (
+            (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
+            )
+        record: cluster:namespace:pod_cpu:active:kube_pod_container_resource_limits
+
+      - expr: |-
+          kube_pod_container_resource_requests{resource="memory",job="kube-state-metrics"}  * on (namespace, pod, cluster)
+          group_left() max by (namespace, pod, cluster) (
+            (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
+          )
+        record: cluster:namespace:pod_memory:active:kube_pod_container_resource_requests
+
+      - expr: |-
+          kube_pod_container_resource_limits{resource="memory",job="kube-state-metrics"}  * on (namespace, pod, cluster)
+          group_left() max by (namespace, pod, cluster) (
+            (kube_pod_status_phase{phase=~"Pending|Running"} == 1)
+          )
+        record: cluster:namespace:pod_memory:active:kube_pod_container_resource_limits
+
+      - expr: |-
+          sum(
+            node_memory_MemAvailable_bytes{job="node-exporter"} or
+            (
+              node_memory_Buffers_bytes{job="node-exporter"} +
+              node_memory_Cached_bytes{job="node-exporter"} +
+              node_memory_MemFree_bytes{job="node-exporter"} +
+              node_memory_Slab_bytes{job="node-exporter"}
+            )
+          ) by (cluster, env)
+        record: :node_memory_MemAvailable_bytes:sum
+
+      - expr: |-
+          sum(
+            label_replace(
+              label_replace(
+                kube_pod_owner{job="kube-state-metrics", owner_kind="ReplicaSet"},
+                "replicaset", "$1", "owner_name", "(.*)"
+              ) * on(replicaset, namespace, env) group_left(owner_name) kube_replicaset_owner{job="kube-state-metrics"},
+              "workload", "$1", "owner_name", "(.*)"
+            )
+          ) by (namespace, workload, pod, env)
+        labels:
+          workload_type: deployment
+        record: mixin_pod_workload
+
+      - expr: |-
+          sum(
+            label_replace(
+              kube_pod_owner{job="kube-state-metrics", owner_kind="DaemonSet"},
+              "workload", "$1", "owner_name", "(.*)"
+            )
+          ) by (namespace, workload, pod, env)
+        labels:
+          workload_type: daemonset
+        record: mixin_pod_workload
+
+      - expr: |-
+          sum(
+            label_replace(
+              kube_pod_owner{job="kube-state-metrics", owner_kind="StatefulSet"},
+              "workload", "$1", "owner_name", "(.*)"
+            )
+          ) by (namespace, workload, pod, env)
+        labels:
+          workload_type: statefulset
+        record: mixin_pod_workload
+
+      - expr: |-
+          container_memory_working_set_bytes{job="kubernetes-cadvisor", image!=""}
+          * on (namespace, pod, env) group_left(node) topk by(namespace, pod, env) (1,
+            max by(namespace, pod, node, env) (kube_pod_info{node!=""})
+          )
+        record: node_namespace_pod_container:container_memory_working_set_bytes
+
+      - expr: |-
+          container_memory_rss{job="kubernetes-cadvisor", image!=""}
+          * on (namespace, pod, env) group_left(node) topk by(namespace, pod, env) (1,
+            max by(namespace, pod, node, env) (kube_pod_info{node!=""})
+          )
+        record: node_namespace_pod_container:container_memory_rss
+
+      - expr: |-
+          container_memory_cache{job="kubernetes-cadvisor", image!=""}
+          * on (namespace, pod, env) group_left(node) topk by(namespace, pod, env) (1,
+            max by(namespace, pod, node, env) (kube_pod_info{node!=""})
+          )
+        record: node_namespace_pod_container:container_memory_cache
+
+      - expr: |-
+          container_memory_swap{job="kubernetes-cadvisor", image!=""}
+          * on (namespace, pod, env) group_left(node) topk by(namespace, pod, env) (1,
+            max by(namespace, pod, node, env) (kube_pod_info{node!=""})
+          )
+        record: node_namespace_pod_container:container_memory_swap

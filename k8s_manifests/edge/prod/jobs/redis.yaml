@@ -1,0 +1,7 @@
+- job_name: "redis_exporter"
+  static_configs:
+    - targets:
+        - master-redis-exporter.monitor-agent.svc.cluster.local:9121
+      labels:
+        env: prod
+        instance: master.hc-prod-redis-7.xaowiu.apse1.cache.amazonaws.com:6379

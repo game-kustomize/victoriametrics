@@ -1,0 +1,7 @@
+- job_name: "mysql_exporter"
+  static_configs:
+    - targets:
+        - uat-mysqld-exporter.monitor-agent.svc.cluster.local:9104
+      labels:
+        env: uat
+        instance: uat-mydb.v16cp.me

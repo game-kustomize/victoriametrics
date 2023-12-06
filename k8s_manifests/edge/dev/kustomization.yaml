@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: monitoring
+resources:
+  - ../base
+
+generatorOptions:
+  disableNameSuffixHash: true
+configMapGenerator:
+  - name: vmagent-config
+    files:
+      - config.yaml=./conf/config.yaml
+  - name: vmagent-jobs
+    files:
+      - container-cadvisor.yaml=./jobs/container-cadvisor.yaml
+      - domain-exporter.yaml=./jobs/domain-exporter.yaml
+      - dotnet-metric.yaml=./jobs/dotnet-metric.yaml
+      - elasticsearch.yaml=./jobs/elasticsearch.yaml
+      - fluentd.yaml=./jobs/fluentd.yaml
+      - http.yaml=./jobs/http.yaml
+      - k8s.yaml=./jobs/k8s.yaml
+      - mysql.yaml=./jobs/mysql.yaml
+      - node-exporter.yaml=./jobs/node-exporter.yaml
+      - process-exporter.yaml=./jobs/process-exporter.yaml
+      - rabbitmq.yaml=./jobs/rabbitmq.yaml
+      - redis.yaml=./jobs/redis.yaml
+      - vmcluster.yaml=./jobs/vmcluster.yaml

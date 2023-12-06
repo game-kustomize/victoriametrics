@@ -1,0 +1,87 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: vmstorage
+  name: vmstorage
+  namespace: monitoring
+spec:
+  serviceName: vmstorage
+  selector:
+    matchLabels:
+      app: vmstorage
+  replicas: 2
+  podManagementPolicy: OrderedReady
+  template:
+    metadata:
+      labels:
+        app: vmstorage
+    spec:
+      automountServiceAccountToken: true
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - vmstorage
+                topologyKey: topology.kubernetes.io/zone
+              weight: 100
+      containers:
+        - name: vmstorage
+          image: "victoriametrics/vmstorage:v1.95.1-cluster"
+          imagePullPolicy: "IfNotPresent"
+          securityContext: {}
+          args:
+            - --dedup.minScrapeInterval=10s
+            - "--retentionPeriod=100d"
+            - "--storageDataPath=/storage"
+            - --http.maxGracefulShutdownDuration=10s
+            - --http.shutdownDelay=5s
+            - --envflag.enable=true
+            - --envflag.prefix=VM_
+            - --loggerLevel=INFO
+            - --loggerOutput=stdout
+            - --loggerFormat=json
+          ports:
+            - name: http
+              containerPort: 8482
+            - name: vminsert
+              containerPort: 8400
+            - name: vmselect
+              containerPort: 8401
+          livenessProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            tcpSocket:
+              port: http
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+          resources: {}
+          volumeMounts:
+            - name: vmstorage-volume
+              mountPath: /storage
+      serviceAccountName: vm
+      terminationGracePeriodSeconds: 60
+  volumeClaimTemplates:
+    - metadata:
+        name: vmstorage-volume
+      spec:
+        storageClassName: "gp3"
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: "100Gi"

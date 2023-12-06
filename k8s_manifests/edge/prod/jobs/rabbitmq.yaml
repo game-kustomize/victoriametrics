@@ -1,0 +1,7 @@
+- job_name: "rabbitmq_exporter"
+  static_configs:
+    - targets:
+        - master-rabbitmq-exporter.monitor-agent.svc.cluster.local:9419
+      labels:
+        env: prod
+        instance: b-060893e8-5e36-4679-a6ed-d47bd6848ab1.mq.ap-southeast-1.amazonaws.com

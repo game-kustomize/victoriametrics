@@ -1,0 +1,14 @@
+- job_name: "process_exporter"
+  static_configs:
+    - targets: ["gs-dev.v16cp.me:9256"]
+      labels:
+        env: dev
+        instance: GS-dev
+    - targets: ["gs-stg.v16cp.me:9256"]
+      labels:
+        env: stg
+        instance: GS-stg
+    - targets: ["gitlab.v16cp.me:9256"]
+      labels:
+        env: devops
+        instance: gitlab-server

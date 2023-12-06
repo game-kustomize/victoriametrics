@@ -1,0 +1,6 @@
+- job_name: "process_exporter"
+  static_configs:
+    - targets: ["gs-uat.v16cp.me:9256"]
+      labels:
+        env: uat
+        instance: GS-uat

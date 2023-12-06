@@ -1,0 +1,12 @@
+- job_name: "container_cadvisor"
+  static_configs:
+    - targets:
+        - gs-dev.v16cp.me:8080
+      labels:
+        env: dev
+        instance: GS-dev
+    - targets:
+        - gs-stg.v16cp.me:8088
+      labels:
+        env: stg
+        instance: GS-stg

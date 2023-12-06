@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 10s
+  external_labels:
+    site: devops
+
+scrape_config_files:
+  - /vmagent/jobs/*.yaml

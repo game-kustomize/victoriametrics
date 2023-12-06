@@ -1,0 +1,44 @@
+- job_name: "HK_node_exporter"
+  ec2_sd_configs:
+    - region: ap-east-1
+      port: 9100
+  relabel_configs:
+    - source_labels: [__meta_ec2_instance_state]
+      regex: "running"
+      action: "keep"
+    - source_labels: [__meta_ec2_platform]
+      regex: "windows"
+      action: "drop"
+    - source_labels: [__meta_ec2_tag_eks_cluster_name]
+      regex: "(.*)eks(.*)"
+      action: "drop"
+    - source_labels: [__meta_ec2_private_ip]
+      target_label: "ip"
+      action: "replace"
+    - source_labels: [__meta_ec2_tag_Environment]
+      target_label: "env"
+      action: "replace"
+    - source_labels: [__meta_ec2_tag_Name]
+      target_label: "instance"
+      action: "replace"
+
+- job_name: "HK_windows_exporter"
+  ec2_sd_configs:
+    - region: ap-east-1
+      port: 9182
+  relabel_configs:
+    - source_labels: [__meta_ec2_instance_state]
+      regex: "running"
+      action: "keep"
+    - source_labels: [__meta_ec2_platform]
+      regex: "windows"
+      action: "keep"
+    - source_labels: [__meta_ec2_private_ip]
+      target_label: "ip"
+      action: "replace"
+    - source_labels: [__meta_ec2_tag_Environment]
+      target_label: "env"
+      action: "replace"
+    - source_labels: [__meta_ec2_tag_Name]
+      target_label: "instance"
+      action: "replace"

@@ -1,0 +1,500 @@
+groups:
+  - name: general.rules
+    rules:
+      - alert: TargetDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: monitor-error
+        annotations:
+          summary: "{{ $labels.env }} Job {{ $labels.job }} target {{ if $labels.pod }} {{ $labels.pod }} {{ else }} {{ $labels.instance }} {{ end }} down"
+
+  - name: Domain_Alert
+    rules:
+      - alert: Domain_Exporter_Error
+        expr: max_over_time(domain_probe_success[6h]) unless domain_probe_success and up == 1
+        for: 12h
+        labels:
+          severity: monitor-error
+        annotations:
+          summary: "{{ $labels.job }} empty query result"
+
+      - alert: DomainExpiring
+        expr: domain_expiry_days < 10
+        for: 24h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Domain {{ $labels.domain }} will expire in less than 10 days"
+
+  - name: BlackBox_Alert
+    rules:
+      - alert: Blackbox_Exporter_Error
+        expr: max_over_time(probe_success[6h]) unless probe_success and up == 1
+        for: 12h
+        labels:
+          severity: monitor-error
+        annotations:
+          summary: "{{ $labels.job }} empty query result"
+
+      - alert: SSLCertExpiring
+        expr: (probe_ssl_earliest_cert_expiry - time()) /86400 < 15
+        for: 24h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Domain {{ $labels.instance }} cert will expire in less than 15 days"
+
+  - name: Windows_Alert
+    rules:
+      - alert: Windows_CPU_Usage High
+        expr: 100 - (avg by (env,instance) (rate(windows_cpu_time_total{mode="idle"}[2m])) * 100) > 80
+        for: 15m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} Windows {{ $labels.instance }} CPU_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/-gjIslqnz/windows-status?var-instance={{ $labels.instance }}"
+
+      - alert: Windows_Memory_Usage High
+        expr: 100 - ((windows_os_physical_memory_free_bytes / windows_cs_physical_memory_bytes) * 100) > 80
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} Windows {{ $labels.instance }} Memory_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/-gjIslqnz/windows-status?var-instance={{ $labels.instance }}"
+
+      - alert: Windows_Disk_Usage High
+        expr: 100 - 100 * ((windows_logical_disk_free_bytes / 1024 / 1024 ) / (windows_logical_disk_size_bytes / 1024 / 1024)) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.env }} Windows {{ $labels.instance }} Disk_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/-gjIslqnz/windows-status?var-instance={{ $labels.instance }}"
+
+  - name: Node_Alert
+    rules:
+      - alert: Node_CPU_Usage High
+        expr: (1 - avg without(cpu, mode) (rate(node_cpu_seconds_total{mode="idle", job!="node-exporter"}[2m]))) * 100 > 80
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} Node {{ $labels.instance }} CPU_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/rYdddlPWk/linux-status?var-job={{ $labels.job }}&var-node={{ $labels.instance }}"
+
+      - alert: Node_Memory_Usage High
+        expr: (1 - (node_memory_MemFree_bytes + node_memory_Cached_bytes + node_memory_Buffers_bytes) / node_memory_MemTotal_bytes{job!="node-exporter"}) * 100 > 80
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} Node {{ $labels.instance }} Memory_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/rYdddlPWk/linux-status?var-job={{ $labels.job }}&var-node={{ $labels.instance }}"
+
+      - alert: Node_Disk_Usage High
+        expr: 100 - ((node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes{job!="node-exporter"}) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.env }} Node {{ $labels.instance }} Disk_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/rYdddlPWk/linux-status?var-job={{ $labels.job }}&var-node={{ $labels.instance }}"
+
+  - name: MySQL_Alert
+    rules:
+      - alert: Mysql_Exporter_Error
+        expr: max_over_time(mysql_up[1h]) unless mysql_up and up == 1
+        for: 2m
+        labels:
+          severity: monitor-error
+        annotations:
+          summary: "{{ $labels.env }} {{ $labels.job }} empty query result"
+
+      - alert: Mysql Down
+        expr: mysql_up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.env }} MySQL {{ $labels.instance }} is down"
+          dashboard: "https://grafana.v16cp.me/d/MQWgroiiz/mysql-overview?var-host={{ $labels.instance }}"
+
+      - alert: Mysql_CPU_Usage High
+        expr: aws_rds_cpuutilization_average offset 2m > 80
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} MySQL {{ $labels.dbinstance_identifier }} CPU_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/AWSRDSdbi/aws-rds?var-region={{ $labels.region }}&var-dbinstanceidentifier={{ $labels.dbinstance_identifier }}"
+
+      - alert: Mysql_Free_Memory Low
+        expr: aws_rds_freeable_memory_average offset 2m /1000 /1000 /1000 < 1
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} MySQL {{ $labels.dbinstance_identifier }} Free Memory: {{ humanize $value }} < 1G"
+          dashboard: "https://grafana.v16cp.me/d/AWSRDSdbi/aws-rds?var-region={{ $labels.region }}&var-dbinstanceidentifier={{ $labels.dbinstance_identifier }}"
+
+      - alert: Mysql_Free_Storage Low
+        expr: aws_rds_free_storage_space_average offset 2m  / 1000 / 1000 / 1000 < 20
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.env }} MySQL {{ $labels.dbinstance_identifier }} Free Storage: {{ humanize $value }} < 20G"
+          dashboard: "https://grafana.v16cp.me/d/AWSRDSdbi/aws-rds?var-region={{ $labels.region }}&var-dbinstanceidentifier={{ $labels.dbinstance_identifier }}"
+
+      - alert: Mysql_Connections High
+        expr: mysql_global_status_threads_connected / mysql_global_variables_max_connections > 80
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} MySQL {{ $labels.instance }} connections: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/MQWgroiiz/mysql-overview?var-host={{ $labels.instance }}"
+
+      - alert: Mysql_Too_Many_Slow_Query
+        expr: increase(mysql_global_status_slow_queries[10m]) > 3
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} MySQL {{ $labels.instance }} slow query: {{ $value }}"
+          dashboard: "https://grafana.v16cp.me/d/MQWgroiiz/mysql-overview?var-host={{ $labels.instance }}"
+
+      - alert: Mysql_Deadlock
+        expr: mysql_global_status_innodb_deadlocks > 0
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} MySQL {{ $labels.instance }} Deadlock: ({{ $value }})"
+          dashboard: "https://grafana.v16cp.me/d/MQWgroiiz/mysql-overview?var-host={{ $labels.instance }}"
+
+  - name: HC Game
+    rules:
+      - alert: HC Game Online Users
+        expr: redis_keys_count >= 0
+        for: 30m
+        labels:
+          env: master
+          severity: info
+        annotations:
+          summary: "HC Game {{ $labels.env }} Online Users: {{ $value }}"
+          dashboard: "https://grafana.v16cp.me/d/6oXEzf4Iz/hc-game?orgId=1&var-env={{ $labels.env }}"
+
+  - name: Redis_Alert
+    rules:
+      - alert: Redis_Exporter_Error
+        expr: max_over_time(redis_up[1h]) unless redis_up and up == 1
+        for: 2m
+        labels:
+          severity: monitor-error
+        annotations:
+          summary: "{{ $labels.env }} {{ $labels.job }} empty query result"
+
+      - alert: Redis Down
+        expr: redis_up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.env }} Redis {{ $labels.instance }} is down"
+          dashboard: "https://grafana.v16cp.me/d/xDLNRKUWz/redis-dashboard-for-prometheus-redis-exporter?var-instance={{ $labels.instance }}"
+
+      - alert: Redis_CPU_Usage High
+        expr: aws_elasticache_cpuutilization_average offset 2m > 80
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} Redis {{ $labels.cache_cluster_id }} CPU_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/AWSERedis/aws-elasticache-redis?var-region={{ $labels.region }}&var-cacheclusterId={{ $labels.cache_cluster_id }}&var-cachenodeid={{ $labels.cache_node_id }}"
+
+      - alert: Redis_Engine_CPU_Usage High
+        expr: aws_elasticache_engine_cpuutilization_average offset 2m > 80
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} Redis {{ $labels.cache_cluster_id }} CPU_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/AWSERedis/aws-elasticache-redis?var-region={{ $labels.region }}&var-cacheclusterId={{ $labels.cache_cluster_id }}&var-cachenodeid={{ $labels.cache_node_id }}"
+
+      - alert: Redis_Memory_Usage High
+        expr: aws_elasticache_database_memory_usage_percentage_average offset 2m > 80
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} Redis {{ $labels.cache_cluster_id }} Memory_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/AWSERedis/aws-elasticache-redis?var-region={{ $labels.region }}&var-cacheclusterId={{ $labels.cache_cluster_id }}&var-cachenodeid={{ $labels.cache_node_id }}"
+
+      - alert: Redis_Connections High
+        expr: redis_connected_clients > 6000
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} Redis {{ $labels.instance }} connections: {{ $value }} > 6000"
+          dashboard: "https://grafana.v16cp.me/d/xDLNRKUWz/redis-dashboard-for-prometheus-redis-exporter?var-instance={{ $labels.instance }}"
+
+  - name: RabbitMQ_Alert
+    rules:
+      - alert: RabbitMQ_Exporter_Error
+        expr: max_over_time(rabbitmq_up[1h]) unless rabbitmq_up and up == 1
+        for: 2m
+        labels:
+          severity: monitor-error
+        annotations:
+          summary: "{{ $labels.env }} {{ $labels.job }} empty query result"
+
+      - alert: RabbitMQ Down
+        expr: rabbitmq_up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.env }} RabbitMQ {{ $labels.instance }} is down"
+          dashboard: "https://grafana.v16cp.me/d/rm9ZhbvVz/rabbitmq-metrics?orgId=1&var-instance={{ $labels.instance }}&var-cluster={{ $labels.cluster }}"
+
+      - alert: Rabbitmq_Memory_Usage High
+        expr: rabbitmq_node_mem_used / rabbitmq_node_mem_limit * 100 > 80
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} RabbitMQ {{ $labels.instance }} Memory_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/rm9ZhbvVz/rabbitmq-metrics?orgId=1&var-instance={{ $labels.instance }}&var-cluster={{ $labels.cluster }}"
+
+      - alert: Rabbitmq_Disk_Usage High
+        expr: rabbitmq_node_disk_free <= rabbitmq_node_disk_free_limit * 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.env }} RabbitMQ {{ $labels.instance }} will be reach disk limit"
+          dashboard: "https://grafana.v16cp.me/d/rm9ZhbvVz/rabbitmq-metrics?orgId=1&var-instance={{ $labels.instance }}&var-cluster={{ $labels.cluster }}"
+
+  - name: Kubernetes_Alert
+    rules:
+      - alert: K8s_Node_CPU_Usage High
+        expr: (1 - avg without(cpu, mode) (rate(node_cpu_seconds_total{mode="idle", job="node-exporter"}[2m]))) * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.env }} Node {{ $labels.instance }} CPU_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/bFxISTzMz/kubernetes-compute-resources-node-groups?var-env={{ $labels.env }}&var-node={{ $labels.instance }}"
+
+      - alert: K8s_Node_Memory_Usage High
+        expr: (1 - (node_memory_MemFree_bytes + node_memory_Cached_bytes + node_memory_Buffers_bytes) / node_memory_MemTotal_bytes{job="node-exporter"}) * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.env }} Node {{ $labels.instance }} Memory_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/bFxISTzMz/kubernetes-compute-resources-node-groups?var-env={{ $labels.env }}&var-node={{ $labels.instance }}"
+
+      - alert: K8s_Node_Disk_Usage High
+        expr: 100 - avg without (mountpoint) ((node_filesystem_avail_bytes * 100) / node_filesystem_size_bytes{job="node-exporter"}) > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.env }} Node {{ $labels.instance }} Disk_Usage: {{ humanize $value }} > 85%"
+          dashboard: "https://grafana.v16cp.me/d/bFxISTzMz/kubernetes-compute-resources-node-groups?var-env={{ $labels.env }}&var-node={{ $labels.instance }}"
+
+      - alert: K8s_PVC_Usage High
+        expr: sum by (env,instance,namespace,persistentvolumeclaim) (kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.env }} Node {{ $labels.instance }} PVC {{ $labels.persistentvolumeclaim }} Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/S2_qjn04k/kubernetes-storage-volumes-namespace?var-env={{ $labels.env }}&var-namespace={{ $labels.namespace }}"
+
+      - alert: K8s_Node_Not_Ready
+        expr: sum by(env,node) (kube_node_status_condition{condition="Ready",status="true"}) == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.env }} Node {{ $labels.node }} not ready"
+
+      - alert: Pod_CPU_Usage High
+        expr: sum by (env,namespace,pod) (node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate) / sum by (env,namespace,pod) (kube_pod_container_resource_limits{resource="cpu"}) * 100 > 80
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} Pod {{ $labels.pod }} CPU_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/1qwe45ad8/kubernetes-compute-resources-namespace-pods?var-env={{ $labels.env }}&var-namespace={{ $labels.namespace }}"
+
+      - alert: Pod_Memory_Usage High
+        expr: sum by (env,namespace,pod) (container_memory_working_set_bytes{container!=""}) / sum by (env,namespace,pod) (kube_pod_container_resource_limits{resource="memory"}) * 100 > 80
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} Pod {{ $labels.pod }} Memory_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/1qwe45ad8/kubernetes-compute-resources-namespace-pods?var-env={{ $labels.env }}&var-namespace={{ $labels.namespace }}"
+
+      - alert: Pod_Crash_Looping
+        expr: sum by (env,namespace,pod) (idelta(kube_pod_container_status_restarts_total[5m])) > 2
+        for: 1m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} Pod {{ $labels.pod }} crash times > 2 in 5m"
+          dashboard: "https://grafana.v16cp.me/d/1qwe45ad8/kubernetes-compute-resources-namespace-pods?var-env={{ $labels.env }}&var-namespace={{ $labels.namespace }}"
+
+      - alert: Pod_Keep_Pending
+        expr: sum by(env,namespace,pod) (kube_pod_status_phase{phase="Pending"}) != 0
+        for: 5m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} Pod {{ $labels.pod }} is pending"
+          dashboard: "https://grafana.v16cp.me/d/1qwe45ad8/kubernetes-compute-resources-namespace-pods?var-env={{ $labels.env }}&var-namespace={{ $labels.namespace }}"
+
+  - name: Docker_Container_Alert
+    rules:
+      - alert: Container_CPU_Usage High
+        expr: sum by(env, instance, name) (rate(container_cpu_usage_seconds_total{name!="",job="container_cadvisor"}[3m])) * 100 > 80
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.instance }} container {{ $labels.name }} CPU_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/4dMaCsRZz/docker-container-and-host-metrics?var-node={{ $labels.instance }}&var-name={{ $labels.name }}"
+
+      - alert: Container_Memory_Usage High
+        expr: (sum by (env, instance, name) (container_memory_working_set_bytes{name!="",job="container_cadvisor"}) / sum by (env, instance, name) (container_spec_memory_limit_bytes{job="container_cadvisor"} > 0) * 100) > 80
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.instance }} container {{ $labels.name }} Memory_Usage: {{ humanize $value }} > 80%"
+          dashboard: "https://grafana.v16cp.me/d/4dMaCsRZz/docker-container-and-host-metrics?var-node={{ $labels.instance }}&var-name={{ $labels.name }}"
+
+  - name: Elasticsearch_Alert
+    rules:
+      - alert: Elasticsearch_Exporter_Error
+        expr: count by(env,job) (max_over_time(elasticsearch_jvm_uptime_seconds[1h])) unless count by(env,job) (elasticsearch_jvm_uptime_seconds) and up == 1
+        for: 2m
+        labels:
+          severity: monitor-error
+        annotations:
+          summary: "{{ $labels.env }} {{ $labels.job }} empty query result"
+
+      - alert: Elasticsearch_Heap_Usage High
+        expr: (elasticsearch_jvm_memory_used_bytes{area="heap"} / elasticsearch_jvm_memory_max_bytes{area="heap"}) * 100 > 85
+        for: 3m
+        labels:
+          severity: attention
+        annotations:
+          summary: "Elasticsearch {{ $labels.name }} Heap Usage: {{ humanize $value }} > 85%"
+          dashboard: "https://grafana.v16cp.me/d/4yyL6dBMk/elasticsearch-exporter-quickstart-and-dashboard?var-name={{ $labels.name }}"
+
+      - alert: Elasticsearch Active Shards High
+        expr: elasticsearch_cluster_health_active_shards / 12000 * 100 > 75
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "Elasticsearch {{ $labels.name }} Shard Usage: {{ humanize $value }} > 75%"
+          dashboard: "https://grafana.v16cp.me/d/TEm5D6ZWk/elasticsearch-metrics"
+
+      - alert: Elasticsearch_Disk_Space Low
+        expr: (elasticsearch_filesystem_data_available_bytes / elasticsearch_filesystem_data_size_bytes) * 100 < 20
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "Elasticsearch {{ $labels.name }} disk space low {{ humanize $value }} < 20%"
+          dashboard: "https://grafana.v16cp.me/d/4yyL6dBMk/elasticsearch-exporter-quickstart-and-dashboard?var-name={{ $labels.name }}"
+
+      - alert: Elasticsearch_DataNodes_Missing
+        expr: elasticsearch_cluster_health_number_of_data_nodes < 2
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "Elasticsearch missing data node, current data node: {{ $value }} < 2"
+          dashboard: "https://grafana.v16cp.me/d/4yyL6dBMk/elasticsearch-exporter-quickstart-and-dashboard?var-name={{ $labels.name }}"
+
+      - alert: Elasticsearch_Cluster_Unhealthy
+        expr: elasticsearch_cluster_health_status{color=~"red|yellow"} == 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Elasticsearch cluster status is {{ $labels.color }}"
+          dashboard: "https://grafana.v16cp.me/d/4yyL6dBMk/elasticsearch-exporter-quickstart-and-dashboard?var-name={{ $labels.name }}"
+
+  - name: Fluentd_Alert
+    rules:
+      - alert: Fluentd_Queue_Length
+        expr: rate(fluentd_status_buffer_queue_length[5m]) > 0.5
+        for: 1m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} fluentd queues: {{ $value }} increased 50% in 5m"
+          dashboard: "https://grafana.v16cp.me/d/bNn5LUtizs3/fluentd-1-x?var-env={{ $labels.env }}"
+
+      - alert: Fluentd_Output_Error
+        expr: idelta(fluentd_output_status_num_errors[2m]) > 0
+        for: 5m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} fluentd plugin {{ $labels.plugin_id }} output error: {{ $value }} for 5m"
+          dashboard: "https://grafana.v16cp.me/d/bNn5LUtizs3/fluentd-1-x?var-env={{ $labels.env }}"
+
+  - name: FluentBit_Alert
+    rules:
+      - alert: FluentBit_Output_Error
+        expr: idelta(fluentbit_output_retries_failed_total[2m]) > 0
+        for: 5m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} Fluentbit output {{ $labels.name }} error: {{ $value }} for 5m"
+          dashboard: "https://grafana.v16cp.me/d/bNn5LUtiz/fluentbit?var-env={{ $labels.env }}"
+
+  - name: AWS_Alert
+    rules:
+      - alert: ALB_Request_Increasing_Fast
+        expr:
+          label_replace (sum by(env,region,load_balancer) (aws_applicationelb_request_count_sum offset 2m) > 500 and
+          sum by(env,region,load_balancer) (rate(aws_applicationelb_request_count_sum[5m] offset 2m)) / sum by(env,region,load_balancer) (rate(aws_applicationelb_request_count_sum[1h] offset 2m)) > 3,"load_balancer_name", "$1", "load_balancer", ".*/(.*)/.*")
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} ALB {{ $labels.load_balancer_name }} increasing too fast in 5m, current request: {{ $value }}"
+          dashboard: "https://grafana.v16cp.me/d/bt8qGKJZz/aws-elb-application-load-balancer?var-region={{ $labels.region }}&var-loadbalancername={{ $labels.load_balancer }}"
+
+      - alert: ALB_HttpCode_5xx
+        expr: label_replace (sum by(env,load_balancer,region) (aws_applicationelb_httpcode_elb_5_xx_count_sum offset 2m) > 10,"load_balancer_name", "$1", "load_balancer", ".*/(.*)/.*")
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} ALB {{ $labels.load_balancer_name }} http code 5xx count: {{ $value }} > 10"
+          dashboard: "https://grafana.v16cp.me/d/bt8qGKJZz/aws-elb-application-load-balancer?var-region={{ $labels.region }}&var-loadbalancername={{ $labels.load_balancer }}"
+
+      - alert: ALB_Target_HttpCode_5xx
+        expr: label_replace (sum by(env,load_balancer,region) (aws_applicationelb_httpcode_target_5_xx_count_sum offset 2m) > 10,"load_balancer_name", "$1", "load_balancer", ".*/(.*)/.*")
+        for: 2m
+        labels:
+          severity: attention
+        annotations:
+          summary: "{{ $labels.env }} ALB {{ $labels.load_balancer_name }} http code 5xx count: {{ $value }} > 10"
+          dashboard: "https://grafana.v16cp.me/d/bt8qGKJZz/aws-elb-application-load-balancer?var-region={{ $labels.region }}&var-loadbalancername={{ $labels.load_balancer }}"
