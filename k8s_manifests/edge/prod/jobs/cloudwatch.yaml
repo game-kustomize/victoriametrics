@@ -1,0 +1,7 @@
+- job_name: "cloudwatch-exporter"
+  static_configs:
+    - targets:
+        - cloudwatch-exporter.monitor-agent.svc.cluster.local:9106
+      labels:
+        region: ap-northeast-1
+        env: uat

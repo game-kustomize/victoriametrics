@@ -233,3 +233,10 @@
       source_labels:
         - __meta_kubernetes_pod_node_name
       target_label: node
+
+- job_name: "kube-state-metrics"
+  static_configs:
+    - targets:
+        - kube-state-metrics.kube-system.svc.cluster.local:8080
+      labels:
+        env: devops

@@ -19,6 +19,7 @@ configMapGenerator:
       - fluentd.yaml=./jobs/fluentd.yaml
       - http.yaml=./jobs/http.yaml
       - k8s.yaml=./jobs/k8s.yaml
+      - keda.yaml=./jobs/keda.yaml
       - mysql.yaml=./jobs/mysql.yaml
       - node-exporter.yaml=./jobs/node-exporter.yaml
       - process-exporter.yaml=./jobs/process-exporter.yaml

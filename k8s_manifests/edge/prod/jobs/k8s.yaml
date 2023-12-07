@@ -271,3 +271,10 @@
       regex: __meta_kubernetes_node_label_(.+)
     - target_label: "env"
       replacement: prod
+
+- job_name: "kube-state-metrics"
+  static_configs:
+    - targets:
+        - kube-state-metrics.kube-system.svc.cluster.local:8080
+      labels:
+        env: prod
