@@ -8,14 +8,7 @@
       replacement: domain-exporter.monitor-agent.svc.cluster.local:9222
   static_configs:
     - targets:
-        - chilligame.app
-        - chilligame.club
-        - chilligame.com
         - twroa.com
         - v16cp.me
-        - chilligame.net
-        - chilligame.org
-        - red-chilli.net
-        - green-chilli.net
-        - chili-game.com
-        - chilli-game.com
+      labels:
+        env: devops
