@@ -31,6 +31,7 @@
   tls_config:
     ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
     insecure_skip_verify: true
+
 - job_name: kubernetes-nodes-cadvisor
   bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
   honor_timestamps: false
@@ -50,6 +51,7 @@
   tls_config:
     ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
     insecure_skip_verify: true
+
 - job_name: kubernetes-service-endpoints
   kubernetes_sd_configs:
     - role: endpointslices
@@ -234,25 +236,6 @@
         - __meta_kubernetes_pod_node_name
       target_label: node
 
-- job_name: "kubernetes-kubelet"
-  scheme: https
-  tls_config:
-    ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-  bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-  kubernetes_sd_configs:
-    - role: node
-  relabel_configs:
-    - action: labelmap
-      regex: __meta_kubernetes_node_label_(.+)
-    - target_label: __address__
-      replacement: kubernetes.default.svc:443
-    - source_labels: [__meta_kubernetes_node_name]
-      regex: (.+)
-      target_label: __metrics_path__
-      replacement: /api/v1/nodes/${1}/proxy/metrics
-    - target_label: "env"
-      replacement: prod
-
 - job_name: "kubernetes-cadvisor"
   scheme: https
   tls_config:
@@ -278,3 +261,20 @@
         - kube-state-metrics.kube-system.svc.cluster.local:8080
       labels:
         env: prod
+
+- job_name: "kubernetes-kubelet"
+  scheme: https
+  tls_config:
+    ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+  bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+  kubernetes_sd_configs:
+    - role: node
+  relabel_configs:
+    - action: labelmap
+      regex: __meta_kubernetes_node_label_(.+)
+    - target_label: __address__
+      replacement: kubernetes.default.svc:443
+    - source_labels: [__meta_kubernetes_node_name]
+      regex: (.+)
+      target_label: __metrics_path__
+      replacement: /api/v1/nodes/${1}/proxy/metrics
