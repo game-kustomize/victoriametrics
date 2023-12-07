@@ -56,7 +56,7 @@
     - source_labels: [__param_target]
       target_label: instance
     - target_label: __address__
-      replacement: 10.70.0.135:9115
+      replacement: prometheus-blackbox-exporter.monitor-agent.svc.cluster.local:9115
 
 - job_name: "loginapi-post-form-ph-globe"
   scrape_interval: 10s

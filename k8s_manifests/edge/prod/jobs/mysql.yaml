@@ -1,7 +1,7 @@
 - job_name: "mysql_exporter"
   static_configs:
     - targets:
-        - master-mysqld-exporter.monitor-agent.svc.cluster.local:9104
+        - mysqld-exporter.monitor-agent.svc.cluster.local:9104
       labels:
         env: prod
         instance: hc-prod-mysql8.cepnscumjcli.ap-southeast-1.rds.amazonaws.com
