@@ -26,3 +26,15 @@ configMapGenerator:
       - rabbitmq.yaml=./jobs/rabbitmq.yaml
       - redis.yaml=./jobs/redis.yaml
       - vmcluster.yaml=./jobs/vmcluster.yaml
+
+patches:
+  - target:
+      kind: Ingress
+      name: vmagent
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: vmagent.v16cp.me
+      - op: replace
+        path: /metadata/annotations/alb.ingress.kubernetes.io~1security-groups
+        value: eks-cluster-sg-devops-eks-2099794627,monitoring
