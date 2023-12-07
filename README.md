@@ -13,10 +13,10 @@ VictoriaMetrics is a fast, cost-effective and scalable monitoring solution and t
 ## deployment
 - clone this repository
 ```shell
-git clone git@gitlab.v16cp.me:sre/monitor/victoriametrics.git && cd k8s_manifests
+git clone git@gitlab.v16cp.me:sre/monitor/victoriametrics.git && cd victoriametrics/k8s_manifests
 ```
 
-- cluster servers
+- cluster servers deployment
 ```shell
 # check resource will created
 kubectl kustomize --load-restrictor LoadRestrictionsNone server
@@ -25,7 +25,7 @@ kubectl kustomize --load-restrictor LoadRestrictionsNone server
 kubectl kustomize --load-restrictor LoadRestrictionsNone server | kubectl apply -f - 
 ```
 
-- edge site example deploy to uat environment
+- example deployment to uat environment
 ```shell
 export TARGET_ENV=uat
 # check resource will created
