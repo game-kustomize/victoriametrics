@@ -2,6 +2,10 @@
   ec2_sd_configs:
     - region: ap-southeast-1
       port: 9100
+      filters:
+        - name: tag:project
+          values:
+            - hc
   relabel_configs:
     - source_labels: [__meta_ec2_instance_state]
       regex: "running"
@@ -11,6 +15,9 @@
       action: "drop"
     - source_labels: [__meta_ec2_tag_Name]
       regex: "speedtest"
+      action: "drop"
+    - source_labels: [__meta_ec2_tag_project]
+      regex: "Alas"
       action: "drop"
     - source_labels: [__meta_ec2_tag_eks_cluster_name]
       regex: "(.*)eks(.*)"
