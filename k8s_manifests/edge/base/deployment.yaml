@@ -30,6 +30,7 @@ spec:
             - -envflag.prefix=VM_
             - -loggerFormat=json
             - -remoteWrite.url=https://vminsert.v16cp.me/insert/0/prometheus/api/v1/write
+            - -promscrape.maxScrapeSize=30MB
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
