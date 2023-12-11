@@ -11,3 +11,9 @@ configMapGenerator:
     files:
       - alert-rule.yaml=./conf/alert-rule.yaml
       - record-rule.yaml=./conf/record-rule.yaml
+
+secretGenerator:
+  - name: vmalert-secret
+    type: Opaque
+    envs:
+      - secret.env

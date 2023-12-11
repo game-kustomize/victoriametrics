@@ -28,6 +28,9 @@ spec:
             - --remoteWrite.url=https://vminsert.v16cp.me/insert/0/prometheus
             - --notifier.url=http://alertmanager:9093
             - --rule=/vmalert/rules/*.yaml
+            - --envflag.enable=true
+            - --envflag.prefix=VM_
+            - --loggerFormat=json
           ports:
             - name: http
               containerPort: 8880
@@ -50,6 +53,9 @@ spec:
             - name: vmalert-rules
               mountPath: /vmalert/rules
           resources: {}
+          envFrom:
+            - secretRef:
+                name: vmalert-secret
       volumes:
         - name: vmalert-rules
           configMap:
