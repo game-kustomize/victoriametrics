@@ -315,7 +315,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "{{ $labels.env }} Node {{ $labels.instance }} PVC {{ $labels.persistentvolumeclaim }} Usage: {{ humanize $value }} > 80%"
+          summary: "{{ $labels.job }} {{ $labels.env }} Node {{ $labels.instance }} PVC {{ $labels.persistentvolumeclaim }} Usage: {{ humanize $value }} > 80%"
           dashboard: "https://grafana.v16cp.me/d/S2_qjn04k/kubernetes-storage-volumes-namespace?var-env={{ $labels.env }}&var-namespace={{ $labels.namespace }}"
 
       - alert: K8s_Node_Not_Ready
