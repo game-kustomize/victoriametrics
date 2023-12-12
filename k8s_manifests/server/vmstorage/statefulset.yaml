@@ -38,8 +38,8 @@ spec:
           securityContext: {}
           args:
             - --dedup.minScrapeInterval=10s
-            - "--retentionPeriod=100d"
-            - "--storageDataPath=/storage"
+            - --retentionPeriod=100d
+            - --storageDataPath=/storage
             - --http.maxGracefulShutdownDuration=10s
             - --http.shutdownDelay=5s
             - --envflag.enable=true
@@ -47,7 +47,6 @@ spec:
             - --loggerLevel=INFO
             - --loggerOutput=stdout
             - --loggerFormat=json
-            - --dedup.minScrapeInterval=10s
           ports:
             - name: http
               containerPort: 8482
