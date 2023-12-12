@@ -47,6 +47,7 @@ spec:
             - --loggerLevel=INFO
             - --loggerOutput=stdout
             - --loggerFormat=json
+            - --dedup.minScrapeInterval=10s
           ports:
             - name: http
               containerPort: 8482

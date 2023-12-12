@@ -37,7 +37,7 @@ spec:
           args:
             - --storageNode=vmstorage-0.vmstorage.monitoring.svc.cluster.local:8400
             - --storageNode=vmstorage-1.vmstorage.monitoring.svc.cluster.local:8400
-            - --replicationFactor=2
+            - --replicationFactor=1
             - --envflag.enable=true
             - --envflag.prefix=VM_
             - --loggerFormat=json
