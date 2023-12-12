@@ -23,9 +23,9 @@ spec:
           imagePullPolicy: "IfNotPresent"
           securityContext: {}
           args:
-            - --datasource.url=http://vmselect:8481/select/0/prometheus
-            - --remoteRead.url=http://vmselect:8481/select/0/prometheus
-            - --remoteWrite.url=https://vminsert.v16cp.me/insert/0/prometheus
+            - --datasource.url=http://vmselect:8481/select/0/prometheus/
+            - --remoteRead.url=http://vmselect:8481/select/0/prometheus/
+            - --remoteWrite.url=https://vminsert.v16cp.me/insert/0/prometheus/
             - --notifier.url=http://alertmanager:9093
             - --rule=/vmalert/rules/*.yaml
             - --envflag.enable=true
