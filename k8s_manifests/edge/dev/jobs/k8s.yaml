@@ -262,3 +262,5 @@
       regex: (.+)
       target_label: __metrics_path__
       replacement: /api/v1/nodes/${1}/proxy/metrics
+    - target_label: "env"
+      replacement: devops
