@@ -19,3 +19,77 @@
       target_label: instance
     - target_label: __address__
       replacement: prometheus-blackbox-exporter.monitor-agent.svc.cluster.local:9115
+
+- job_name: 'network-speed-form-ph-globe'
+  scrape_interval: 10s
+  metrics_path: /probe
+  params:
+    module: [http_2xx]
+  static_configs:
+  - targets:
+      - https://m7dxp7kd.chilligame.club/version
+      - https://gam7dxp7kd.chilligame.club/version
+      - https://release.chilligame.com/health.html
+      - https://hotfix.chilligame.com/health.html
+      - https://wwdfdd4.chilligame.club/version
+  relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: nkspeed.v16cp.me:9115
+
+- job_name: 'network-speed-form-ph-aliyun'
+  scrape_interval: 10s
+  metrics_path: /probe
+  params:
+    module: [http_2xx]
+  static_configs:
+  - targets:
+      - https://m7dxp7kd.chilligame.club/version
+      - https://gam7dxp7kd.chilligame.club/version
+      - https://release.chilligame.com/health.html
+      - https://hotfix.chilligame.com/health.html
+      - https://wwdfdd4.chilligame.club/version
+  relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: 8.212.149.29:9115
+
+- job_name: 'network-speed-form-aws-sg'
+  scrape_interval: 10s
+  metrics_path: /probe
+  params:
+    module: [http_2xx]
+  static_configs:
+  - targets:
+    - https://m7dxp7kd.chilligame.club/version
+    - https://gam7dxp7kd.chilligame.club/version
+    - https://release.chilligame.com/health.html
+    - https://hotfix.chilligame.com/health.html
+    - https://wwdfdd4.chilli
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: 10.70.0.135:9115
+
+- job_name: 'loginapi-post-form-ph-globe'
+  scrape_interval: 10s
+  metrics_path: /probe
+  params:
+    module: [loginapi_post]
+  static_configs:
+  - targets:
+      - https://wwdfdd4.chilligame.club/api/v1/GetAnnouncementList
+  relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: nkspeed.v16cp.me:9115
