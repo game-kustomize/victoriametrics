@@ -1,5 +1,0 @@
-- job_name: "keda-metrics"
-  static_configs:
-    - targets:
-        - keda-operator.keda.svc.cluster.local:8080
-      env: devops

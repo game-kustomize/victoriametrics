@@ -182,7 +182,6 @@ groups:
         expr: redis_keys_count >= 0
         for: 30m
         labels:
-          env: master
           severity: info
         annotations:
           summary: "HC Game {{ $labels.env }} Online Users: {{ $value }}"
