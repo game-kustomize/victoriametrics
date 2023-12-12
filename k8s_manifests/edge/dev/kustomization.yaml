@@ -14,7 +14,7 @@ configMapGenerator:
     files:
       - container-cadvisor.yaml=./jobs/container-cadvisor.yaml
       - domain-exporter.yaml=./jobs/domain-exporter.yaml
-      - dotnet-metric.yaml=./jobs/dotnet-metric.yaml
+      - dotnet.yaml=./jobs/dotnet.yaml
       - elasticsearch.yaml=./jobs/elasticsearch.yaml
       - fluentd.yaml=./jobs/fluentd.yaml
       - http.yaml=./jobs/http.yaml

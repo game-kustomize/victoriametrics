@@ -14,7 +14,7 @@ configMapGenerator:
     files:
       - cloudwatch.yaml=./jobs/cloudwatch.yaml
       - container-cadvisor.yaml=./jobs/container-cadvisor.yaml
-      - dotnet-metrics.yaml=./jobs/dotnet-metrics.yaml
+      - dotnet.yaml=./jobs/dotnet.yaml
       - fluentd.yaml=./jobs/fluentd.yaml
       - k8s.yaml=./jobs/k8s.yaml
       - keda.yaml=./jobs/keda.yaml
