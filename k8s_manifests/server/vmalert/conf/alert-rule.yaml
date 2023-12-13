@@ -456,17 +456,6 @@ groups:
           summary: "{{ $labels.env }} fluentd plugin {{ $labels.plugin_id }} output error: {{ $value }} for 5m"
           dashboard: "https://grafana.v16cp.me/d/bNn5LUtizs3/fluentd-1-x?var-env={{ $labels.env }}"
 
-  - name: FluentBit_Alert
-    rules:
-      - alert: FluentBit_Output_Error
-        expr: idelta(fluentbit_output_retries_failed_total[2m]) > 0
-        for: 5m
-        labels:
-          severity: attention
-        annotations:
-          summary: "{{ $labels.env }} Fluentbit output {{ $labels.name }} error: {{ $value }} for 5m"
-          dashboard: "https://grafana.v16cp.me/d/bNn5LUtiz/fluentbit?var-env={{ $labels.env }}"
-
   - name: AWS_Alert
     rules:
       - alert: ALB_Request_Increasing_Fast
