@@ -185,7 +185,7 @@ groups:
           severity: info
         annotations:
           summary: "HC Game {{ $labels.env }} Online Users: {{ $value }}"
-          dashboard: "https://grafana.v16cp.me/d/HCGAME/hc-game?orgId=1&var-env={{ $labels.env }}"
+          dashboard: "https://grafana.v16cp.me/d/HCGAME/hg-game?var-env={{ $labels.env }}"
 
   - name: Redis_Alert
     rules:
