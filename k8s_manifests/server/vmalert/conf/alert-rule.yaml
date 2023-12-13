@@ -183,6 +183,7 @@ groups:
         for: 30m
         labels:
           severity: info
+          env: prod
         annotations:
           summary: "HC Game {{ $labels.env }} Online Users: {{ $value }}"
           dashboard: "https://grafana.v16cp.me/d/6oXEzf4Iz/hc-game?orgId=1&var-env={{ $labels.env }}"

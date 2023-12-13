@@ -44,3 +44,5 @@
       action: "replace"
     - target_label: "env"
       replacement: prod
+    - target_label: "cluster"
+      replacement: hc-prod-eks

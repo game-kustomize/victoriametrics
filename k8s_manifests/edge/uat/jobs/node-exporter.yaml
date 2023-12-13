@@ -37,3 +37,5 @@
       action: "replace"
     - target_label: "env"
       replacement: uat
+    - target_label: "cluster"
+      replacement: happy_casino_uat

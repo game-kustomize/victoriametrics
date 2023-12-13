@@ -9,6 +9,8 @@
         - __meta_kubernetes_namespace
         - __meta_kubernetes_service_name
         - __meta_kubernetes_endpoint_port_name
+    - target_label: "cluster"
+      replacement: hc-prod-eks
   scheme: https
   tls_config:
     ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
@@ -69,6 +71,8 @@
       source_labels:
         - __meta_kubernetes_pod_node_name
       target_label: node
+    - target_label: "cluster"
+      replacement: hc-prod-eks
 - job_name: kubernetes-service-endpoints-slow
   kubernetes_sd_configs:
     - role: endpointslices
@@ -124,6 +128,8 @@
       source_labels:
         - __meta_kubernetes_pod_node_name
       target_label: node
+    - target_label: "cluster"
+      replacement: hc-prod-eks
   scrape_interval: 5m
   scrape_timeout: 30s
 - job_name: kubernetes-services
@@ -154,50 +160,8 @@
     - source_labels:
         - __meta_kubernetes_service_name
       target_label: service
-
-# - job_name: kubernetes-pods
-#   kubernetes_sd_configs:
-#     - role: pod
-#   relabel_configs:
-#     - action: drop
-#       regex: true
-#       source_labels:
-#         - __meta_kubernetes_pod_container_init
-#     - action: keep_if_equal
-#       source_labels:
-#         - __meta_kubernetes_pod_annotation_prometheus_io_port
-#         - __meta_kubernetes_pod_container_port_number
-#     - action: keep
-#       regex: true
-#       source_labels:
-#         - __meta_kubernetes_pod_annotation_prometheus_io_scrape
-#     - action: replace
-#       regex: (.+)
-#       source_labels:
-#         - __meta_kubernetes_pod_annotation_prometheus_io_path
-#       target_label: __metrics_path__
-#     - action: replace
-#       regex: ([^:]+)(?::\d+)?;(\d+)
-#       replacement: $1:$2
-#       source_labels:
-#         - __address__
-#         - __meta_kubernetes_pod_annotation_prometheus_io_port
-#       target_label: __address__
-#     - action: labelmap
-#       regex: __meta_kubernetes_pod_label_(.+)
-#     - source_labels:
-#         - __meta_kubernetes_pod_name
-#       target_label: pod
-#     - source_labels:
-#         - __meta_kubernetes_pod_container_name
-#       target_label: container
-#     - source_labels:
-#         - __meta_kubernetes_namespace
-#       target_label: namespace
-#     - action: replace
-#       source_labels:
-#         - __meta_kubernetes_pod_node_name
-#       target_label: node
+    - target_label: "cluster"
+      replacement: hc-prod-eks
 
 - job_name: "kubernetes-cadvisor"
   scheme: https
@@ -217,6 +181,8 @@
       regex: __meta_kubernetes_node_label_(.+)
     - target_label: "env"
       replacement: prod
+    - target_label: "cluster"
+      replacement: hc-prod-eks
 
 - job_name: "kube-state-metrics"
   static_configs:
@@ -224,6 +190,7 @@
         - kube-state-metrics.kube-system.svc.cluster.local:8080
       labels:
         env: prod
+        cluster: hc-prod-eks
 
 - job_name: "kubernetes-kubelet"
   scheme: https
@@ -241,3 +208,5 @@
       regex: (.+)
       target_label: __metrics_path__
       replacement: /api/v1/nodes/${1}/proxy/metrics
+    - target_label: "cluster"
+      replacement: hc-prod-eks
