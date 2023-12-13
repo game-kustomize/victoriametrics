@@ -180,7 +180,7 @@ groups:
     rules:
       - alert: HC Game Online Users
         expr: redis_keys_count{env="prod"} >= 0
-        for: 30m
+        for: 1m
         labels:
           severity: info
         annotations:
