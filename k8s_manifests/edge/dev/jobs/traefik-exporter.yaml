@@ -1,10 +1,14 @@
 - job_name: "traefik-monitor"
+  ec2_sd_configs:
+    - region: ap-east-1
+      port: 8888
+      filters:
+        - name: tag:Name
+          values:
+            - GS-stg
   metrics_path: /metrics
   relabel_configs:
     - source_labels: [__address__]
       target_label: __param_target
-  static_configs:
-    - targets:
-        - 10.10.20.48:8888
-      labels:
-        env: stg
+    - target_label: "env"
+      replacement: stg
