@@ -33,7 +33,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/rules/0/host
-        value: vmagent.v16cp.me
+        value: metric-sources-dev.v16cp.me
       - op: replace
         path: /metadata/annotations/alb.ingress.kubernetes.io~1security-groups
         value: eks-cluster-sg-devops-eks-2099794627,monitoring
