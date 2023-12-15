@@ -12,12 +12,12 @@ metadata:
     alb.ingress.kubernetes.io/healthcheck-path: /health
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/ssl-redirect: "443"
-    alb.ingress.kubernetes.io/load-balancer-attributes: deletion_protection.enabled=false,idle_timeout.timeout_seconds=60
+    alb.ingress.kubernetes.io/load-balancer-attributes: deletion_protection.enabled=true,idle_timeout.timeout_seconds=60
     alb.ingress.kubernetes.io/security-groups: eks-cluster-sg-devops-eks-2099794627, metrics-storage
 spec:
   ingressClassName: alb
   rules:
-    - host: vminsert.v16cp.me
+    - host: metrics-collector.v16cp.me
       http:
         paths:
           - path: /
