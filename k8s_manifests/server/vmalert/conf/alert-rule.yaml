@@ -401,12 +401,12 @@ groups:
           dashboard: "https://grafana.v16cp.me/d/4yyL6dBMk/elasticsearch-exporter-quickstart-and-dashboard?var-name={{ $labels.name }}"
 
       - alert: Elasticsearch Active Shards High
-        expr: elasticsearch_cluster_health_active_shards / 12000 * 100 > 75
+        expr: sum(elasticsearch_cluster_health_active_shards) / (sum(elasticsearch_cluster_health_number_of_data_nodes) * sum(elasticsearch_clustersettings_stats_max_shards_per_node)) * 100 >= 75
         for: 2m
         labels:
           severity: attention
         annotations:
-          summary: "Elasticsearch {{ $labels.name }} Shard Usage: {{ humanize $value }} > 75%"
+          summary: "Elasticsearch {{ $labels.name }} Shard Usage: {{ humanize $value }} >= 75%"
           dashboard: "https://grafana.v16cp.me/d/TEm5D6ZWk/elasticsearch-metrics"
 
       - alert: Elasticsearch_Disk_Space Low
