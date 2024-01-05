@@ -26,6 +26,7 @@ configMapGenerator:
       - redis.yaml=./jobs/redis.yaml
       - vmcluster.yaml=./jobs/vmcluster.yaml
       - traefik-exporter.yaml=./jobs/traefik-exporter.yaml
+      - linkerd.yaml=./jobs/linkerd.yaml
 patches:
   - target:
       kind: Ingress
