@@ -21,7 +21,7 @@ spec:
       containers:
         - name: vmagent
           securityContext: {}
-          image: "victoriametrics/vmagent:v1.95.1"
+          image: "victoriametrics/vmagent:v1.97.1"
           workingDir: /
           args:
             - -promscrape.config=/vmagent/config/config.yaml
@@ -30,7 +30,7 @@ spec:
             - -envflag.prefix=VM_
             - -loggerFormat=json
             - -remoteWrite.url=https://metrics-collector.v16cp.me/insert/0/prometheus/api/v1/write
-            - -promscrape.maxScrapeSize=30MB
+            - -promscrape.maxScrapeSize=50MB
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

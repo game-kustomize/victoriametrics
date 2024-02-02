@@ -43,4 +43,4 @@ patches:
         value: metric-sources-dev.v16cp.me
       - op: replace
         path: /metadata/annotations/alb.ingress.kubernetes.io~1security-groups
-        value: eks-cluster-sg-devops-eks-2099794627,metrics-source
+        value: whitelist,Public_Access
