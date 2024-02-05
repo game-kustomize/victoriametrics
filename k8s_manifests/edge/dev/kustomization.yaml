@@ -29,6 +29,22 @@ configMapGenerator:
       - linkerd.yaml=./jobs/linkerd.yaml
 patches:
   - target:
+      kind: Deployment
+      name: vmagent
+    patch: |-
+      - op: add
+        path: /spec/template/metadata/annotations/vaultpy.io~1target-resource-type
+        value: secret
+      - op: add
+        path: /spec/template/metadata/annotations/vaultpy.io~1target-resource-name
+        value: vmagent-secret
+      - op: add
+        path: /spec/template/metadata/annotations/vaultpy.io~1kv2-name
+        value: v16-devops
+      - op: add
+        path: /spec/template/metadata/annotations/vaultpy.io~1kv2-path
+        value: /monitoring/victoriametrics/dev/vmagent/secret
+  - target:
       kind: Ingress
       name: vmagent
     patch: |-

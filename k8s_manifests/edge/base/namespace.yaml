@@ -3,4 +3,5 @@ kind: Namespace
 metadata:
   labels:
     kubernetes.io/metadata.name: monitoring
+    vaultpy.io/admission-webhooks: enabled
   name: monitoring
