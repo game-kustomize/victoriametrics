@@ -10,6 +10,22 @@ VictoriaMetrics is a fast, cost-effective and scalable monitoring solution and t
 - https://docs.victoriametrics.com/relabeling.html
 - https://docs.victoriametrics.com/vmalert.html
 
+## metrics data flow
+- metrics ingest
+```mermaid
+graph LR
+vmagent -- HTTP GET--> exports
+vmagent -- HTTP POST--> vminsert
+vminsert -- HTTP POST--> vmstorage
+```
+
+- metrics query
+```mermaid
+graph LR
+user -- HTTP GET --> vmselect
+vmselect -- HTTP GET --> vmstorage
+```
+
 ## deployment
 - clone this repository
 ```shell
