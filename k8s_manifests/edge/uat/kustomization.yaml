@@ -31,10 +31,16 @@ patches:
     patch: |-
       - op: add
         path: /metadata/annotations/alb.ingress.kubernetes.io~1load-balancer-name
-        value: infra-internal
+        value: internaloidc
       - op: add
         path: /metadata/annotations/alb.ingress.kubernetes.io~1group.name
-        value: infra-internal
+        value: internal-oidc
+      - op: add
+        path: /metadata/annotations/alb.ingress.kubernetes.io~1auth-type
+        value: oidc
+      - op: add
+        path: /metadata/annotations/alb.ingress.kubernetes.io~1auth-idp-oidc
+        value: '{"issuer":"https://keycloak.v16cp.me/auth/realms/master","authorizationEndpoint":"https://keycloak.v16cp.me/auth/realms/master/protocol/openid-connect/auth","tokenEndpoint":"https://keycloak.v16cp.me/auth/realms/master/protocol/openid-connect/token","userInfoEndpoint":"https://keycloak.v16cp.me/auth/realms/master/protocol/openid-connect/userinfo","secretName":"vmagent-secret"}'
       - op: replace
         path: /spec/rules/0/host
         value: metric-sources-uat.v16cp.me
