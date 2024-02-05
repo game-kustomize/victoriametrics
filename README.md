@@ -14,15 +14,16 @@ VictoriaMetrics is a fast, cost-effective and scalable monitoring solution and t
 - metrics ingest
 ```mermaid
 graph LR
-vmagent -- HTTP GET--> exports
-vmagent -- HTTP POST--> vminsert
-vminsert -- HTTP POST--> vmstorage
+vmagent -- HTTP GET --> exports
+vmagent -- HTTP POST --> vminsert
+vminsert -- HTTP POST --> vmstorage
+vmalert(vmalert record rule) -- HTTP POST --> vminsert
 ```
 
 - metrics query
 ```mermaid
 graph LR
-user -- HTTP GET --> vmselect
+client(vmalert, Grafana) -- HTTP GET --> vmselect
 vmselect -- HTTP GET --> vmstorage
 ```
 
