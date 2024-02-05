@@ -47,3 +47,34 @@ subjects:
   - kind: ServiceAccount
     name: vmagent
     namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: vmagent-oidc-role
+  namespace: monitoring
+rules:
+  - apiGroups:
+      - ""
+    resourceNames:
+      - vmagent-secret
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: vmagent-oidc-rolebind
+  namespace: monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: vmagent-oidc-role
+subjects:
+  - kind: ServiceAccount
+    name: aws-load-balancer-controller
+    namespace: kube-system
