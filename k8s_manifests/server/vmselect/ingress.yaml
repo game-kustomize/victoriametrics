@@ -13,7 +13,7 @@ metadata:
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/ssl-redirect: "443"
     alb.ingress.kubernetes.io/load-balancer-attributes: deletion_protection.enabled=true,idle_timeout.timeout_seconds=60
-    alb.ingress.kubernetes.io/security-groups: eks-cluster-sg-devops-eks-2099794627, metrics-querent
+    alb.ingress.kubernetes.io/security-groups: sample
 spec:
   ingressClassName: alb
   rules:
