@@ -5,7 +5,8 @@ metadata:
   name: vmagent
   namespace: monitoring
   annotations:
-    alb.ingress.kubernetes.io/load-balancer-name: vmagent
+    alb.ingress.kubernetes.io/load-balancer-name: internaloidc
+    alb.ingress.kubernetes.io/group.name: internal-oidc
     alb.ingress.kubernetes.io/scheme: internal
     alb.ingress.kubernetes.io/backend-protocol: HTTP
     alb.ingress.kubernetes.io/target-type: "ip"
@@ -14,6 +15,10 @@ metadata:
     alb.ingress.kubernetes.io/ssl-redirect: "443"
     alb.ingress.kubernetes.io/load-balancer-attributes: deletion_protection.enabled=true,idle_timeout.timeout_seconds=60
     alb.ingress.kubernetes.io/security-groups: "example"
+    alb.ingress.kubernetes.io/auth-type: oidc
+    alb.ingress.kubernetes.io/auth-on-unauthenticated-request: authenticate
+    alb.ingress.kubernetes.io/auth-session-timeout: 14400
+
 spec:
   ingressClassName: alb
   rules:
