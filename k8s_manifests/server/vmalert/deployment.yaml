@@ -31,6 +31,9 @@ spec:
             - --envflag.enable=true
             - --envflag.prefix=VM_
             - --loggerFormat=json
+            - --configCheckInterval=1m
+            - --loggerFormat=json
+            - --loggerLevel=ERROR
           ports:
             - name: http
               containerPort: 8880
