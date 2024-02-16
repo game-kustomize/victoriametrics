@@ -20,12 +20,12 @@ groups:
           summary: "{{ $labels.job }} empty query result"
 
       - alert: DomainExpiring
-        expr: domain_expiry_days < 10
+        expr: domain_expiry_days < 14
         for: 24h
         labels:
           severity: warning
         annotations:
-          summary: "Domain {{ $labels.domain }} will expire in less than 10 days"
+          summary: "Domain {{ $labels.domain }} will expire in less than 14 days"
 
   - name: BlackBox_Alert
     rules:
