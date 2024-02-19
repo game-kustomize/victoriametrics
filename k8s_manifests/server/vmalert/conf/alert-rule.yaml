@@ -165,7 +165,7 @@ groups:
           severity: attention
         annotations:
           summary: "{{ $labels.env }} MySQL {{ $labels.instance }} slow query: {{ $value }}"
-          dashboard: "https://kibana.v16cp.me/app/discover#/?_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-15m,to:now))&_a=(columns:!(),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:hc-{{ $labels.env }}-mysql-log,key:query,negate:!f,type:custom,value:'%7B%22wildcard%22:%7B%22log_group%22:%7B%22value%22:%22*slowquery%22%7D%7D%7D'),query:(wildcard:(log_group:(value:'*slowquery'))))),index:{{ $labels.env }}-mysql-log,interval:auto,query:(language:kuery,query:''),sort:!(!(log_events.timestamp,desc)))"
+          dashboard: "https://kibana.v16cp.me/app/discover#/?_g=(filters:!(),refreshInterval:(pause:!t,value:0),time:(from:now-15m,to:now))&_a=(columns:!(),filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:hc-{{ $labels.env }}-mysql-log,key:query,negate:!f,type:custom,value:'%7B%22wildcard%22:%7B%22log_group%22:%7B%22value%22:%22*slowquery%22%7D%7D%7D'),query:(wildcard:(log_group:(value:'*slowquery'))))),index:hc-{{ $labels.env }}-mysql-log,interval:auto,query:(language:kuery,query:''),sort:!(!(log_events.timestamp,desc)))"
 
       - alert: Mysql_Deadlock
         expr: mysql_global_status_innodb_deadlocks > 0
