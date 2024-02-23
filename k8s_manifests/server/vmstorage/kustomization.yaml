@@ -4,3 +4,4 @@ namespace: monitoring
 resources:
   - statefulset.yaml
   - service.yaml
+  - pdb.yaml

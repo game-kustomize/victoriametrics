@@ -6,6 +6,7 @@ resources:
   - service.yaml
   - rbac.yaml
   - ingress.yaml
+  - pdb.yaml
 patches:
   - target:
       kind: Ingress
