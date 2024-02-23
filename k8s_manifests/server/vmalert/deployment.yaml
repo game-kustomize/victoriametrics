@@ -63,3 +63,12 @@ spec:
         - name: vmalert-rules
           configMap:
             name: vmalert-rules
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: loadtype
+                    operator: NotIn
+                    values:
+                      - high
