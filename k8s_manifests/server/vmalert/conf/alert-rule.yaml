@@ -20,12 +20,12 @@ groups:
           summary: "{{ $labels.job }} empty query result"
 
       - alert: DomainExpiring
-        expr: domain_expiry_days < 14
+        expr: domain_expiry_days < 15
         for: 24h
         labels:
           severity: warning
         annotations:
-          summary: "Domain {{ $labels.domain }} will expire in less than 14 days"
+          summary: "Domain {{ $labels.domain }} will expire in less than 15 days"
 
   - name: BlackBox_Alert
     rules:
@@ -43,7 +43,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "Domain {{ $labels.instance }} cert will expire in less than 15 days"
+          summary: "SSL cert with {{ $labels.instance }} will expire in less than 15 days"
 
   - name: Windows_Alert
     rules:
