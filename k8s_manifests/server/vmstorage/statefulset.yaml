@@ -25,10 +25,10 @@ spec:
             - podAffinityTerm:
                 labelSelector:
                   matchExpressions:
-                    - key: app
+                    - key: loadtype
                       operator: In
                       values:
-                        - vmstorage
+                        - high
                 topologyKey: topology.kubernetes.io/zone
               weight: 100
       containers:
