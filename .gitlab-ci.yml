@@ -1,0 +1,3 @@
+include:
+  - project: 'sre/pipeline-sources/infra-services'
+    file: '/k8s/VictoriaMetrics.yaml'
