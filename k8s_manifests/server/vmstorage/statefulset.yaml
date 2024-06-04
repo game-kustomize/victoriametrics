@@ -26,7 +26,7 @@ spec:
                 labelSelector:
                   matchExpressions:
                     - key: loadtype
-                      operator: In
+                      operator: NotIn
                       values:
                         - high
                 topologyKey: topology.kubernetes.io/zone
