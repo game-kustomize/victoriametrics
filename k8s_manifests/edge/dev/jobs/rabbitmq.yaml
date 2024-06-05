@@ -1,12 +1,7 @@
 - job_name: "rabbitmq_exporter"
   static_configs:
     - targets:
-        - dev-rabbitmq-exporter.monitor-agent.svc.cluster.local:9419
-      labels:
-        env: dev
-        instance: infra-dev.v16cp.me:5672
-    - targets:
         - stg-rabbitmq-exporter.monitor-agent.svc.cluster.local:9419
       labels:
         env: stg
-        instance: infra-dev.v16cp.me:5672
+        instance: infra-stg.v16cp.me:5672

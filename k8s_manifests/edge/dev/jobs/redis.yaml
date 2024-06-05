@@ -1,11 +1,6 @@
 - job_name: "redis_exporter"
   static_configs:
     - targets:
-        - dev-redis-exporter.monitor-agent.svc.cluster.local:9121
-      labels:
-        env: dev
-        instance: infra-dev.v16cp.me:6379
-    - targets:
         - stg-redis-exporter.monitor-agent.svc.cluster.local:9121
       labels:
         env: stg

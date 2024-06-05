@@ -1,26 +1,6 @@
 - job_name: "dotnet-metric"
   static_configs:
     - targets:
-        - dev-ext.v16cp.me:9700
-      labels:
-        env: dev
-        namespace: hcloginapi
-    - targets:
-        - dev-ext.v16cp.me:9200
-      labels:
-        env: dev
-        namespace: hcgameapi
-    - targets:
-        - dev-ext.v16cp.me:9800
-      labels:
-        env: dev
-        namespace: hctaskschedulerweb
-    - targets:
-        - dev-ext.v16cp.me:9000
-      labels:
-        env: dev
-        namespace: hcadmin
-    - targets:
         - stg-ext.v16cp.me:9700
       labels:
         env: stg
