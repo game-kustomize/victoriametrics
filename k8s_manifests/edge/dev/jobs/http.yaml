@@ -5,7 +5,6 @@
     module: [http_2xx]
   static_configs:
   - targets:
-      - https://meet.twroa.com
       - https://rocket.v16cp.me
       - https://jira.v16cp.me
       - https://confluence.v16cp.me
