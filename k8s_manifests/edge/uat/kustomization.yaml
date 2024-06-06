@@ -13,14 +13,12 @@ configMapGenerator:
   - name: vmagent-jobs
     files:
       - cloudwatch.yaml=./jobs/cloudwatch.yaml
-      - container-cadvisor.yaml=./jobs/container-cadvisor.yaml
       - dotnet.yaml=./jobs/dotnet.yaml
       - fluentd.yaml=./jobs/fluentd.yaml
       - k8s.yaml=./jobs/k8s.yaml
       - keda.yaml=./jobs/keda.yaml
       - mysql.yaml=./jobs/mysql.yaml
       - node-exporter.yaml=./jobs/node-exporter.yaml
-      - process-exporter.yaml=./jobs/process-exporter.yaml
       - rabbitmq.yaml=./jobs/rabbitmq.yaml
       - redis.yaml=./jobs/redis.yaml
       - vm.yaml=./jobs/vm.yaml
