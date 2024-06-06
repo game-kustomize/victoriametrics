@@ -13,7 +13,6 @@ configMapGenerator:
   - name: vmagent-jobs
     files:
       - cloudwatch.yaml=./jobs/cloudwatch.yaml
-      - container-cadvisor.yaml=./jobs/container-cadvisor.yaml
       - dotnet.yaml=./jobs/dotnet.yaml
       - domain-exporter.yaml=./jobs/domain-exporter.yaml
       - fluentd.yaml=./jobs/fluentd.yaml
